@@ -1,0 +1,61 @@
+<ul class="list">
+  <li class="item-border" *ngFor="let subCategory of subCategories">
+    <div class="expander-inner category" *ngIf="subCategory.subCategories.length > 0; else nosubCategories">
+      <div class="expander-header" [id]="'heading-' + subCategory.id">
+        <div class="item btn-item">
+          <div class="inner-cont">
+            <span class="btn arrow collapsed" [attr.data-target]="'#collapse-' + subCategory.id" data-toggle="collapse"
+              aria-expanded="false">{{ subCategory.name }}</span>
+          </div>
+          <div class="more d-flex">
+            <span class="icon-hover" data-toggle="tooltip" data-placement="top" title="New subcategory">
+              <i class="icon-plus-circle" data-target="#addCategoryModal" data-toggle="modal"
+                (click)="addSubcategory(subCategory.id)"></i>
+            </span>
+            <div class="dropdown">
+              <span class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fal fa-ellipsis-v"></i>
+              </span>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" data-target="#editCategoryModal" data-toggle="modal"
+                  (click)="editSubcategory(subCategory.id)">Edit</a>
+                <a class="dropdown-item" href="#" data-target="#deleteModal" data-toggle="modal"
+                  (click)="deleteSubCategory(subCategory.id)">Delete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [id]="'collapse-' + subCategory.id" class="collapse" [attr.aria-labelledby]="'heading-' + subCategory.id">
+        <app-recursive [subCategories]="subCategory.subCategories" (deleteSubCategoryEvent)="deleteSubCategory($event)"
+          (addSubCategoryEvent)="addSubcategory($event)"
+          (editSubCategoryEvent)="editSubcategory($event)"></app-recursive>
+      </div>
+    </div>
+
+    <ng-template #nosubCategories>
+  <li class="item">
+    <div class="inner-cont">
+      <a class="dropdown-item" href="#" data-target="#editCategoryModal" data-toggle="modal">{{subCategory.name}}</a>
+    </div>
+    <div class="more d-flex">
+      <span class="icon-hover" data-toggle="tooltip" data-placement="top" title="New subcategory">
+        <i class="icon-plus-circle" data-target="#addCategoryModal" data-toggle="modal"
+          (click)="addSubcategory(subCategory.id)"></i>
+      </span>
+      <div class="dropdown">
+        <span class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+          <i class="fal fa-ellipsis-v"></i>
+        </span>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#" data-target="#editCategoryModal" data-toggle="modal"
+            (click)="editSubcategory(subCategory.id)">Edit</a>
+          <a class="dropdown-item" href="#" data-target="#deleteModal" data-toggle="modal"
+            (click)="deleteSubCategory(subCategory.id)">Delete</a>
+        </div>
+      </div>
+    </div>
+  </li>
+  </ng-template>
+  </li>
+</ul>

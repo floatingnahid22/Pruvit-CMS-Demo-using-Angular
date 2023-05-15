@@ -1,0 +1,75 @@
+<aside class="cms-body">
+  <header class="cms-body-header">
+    <div class="inner">
+      <h1 class="cms-body-heading jumbo-small">Collection</h1>
+      <div class="cms-search">
+        <i class="icon-search cms-search-icon"></i>
+        <input type="email" class="form-control cms-search-input" id="exampleInputEmail1" aria-describedby="emailHelp"
+          placeholder="Search" />
+      </div>
+    </div>
+  </header>
+  <!-- END of cms-body-header -->
+  <section class="cms-body-inner">
+    <article class="container-fluid">
+      <figure class="row">
+        <div class="cms-body-sidenav">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a routerLinkActive="active" routerLink="/collections/categories" class="nav-link">Categories</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" routerLink="/collections/attributes" class="nav-link">Attributes</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="files.html">Files</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="#">Formula</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="tags.html">Tags</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="#">Metadata</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link " href="text-snippets.html">Text snippets</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="selling-channels.html">Selling channels</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="#">Taxes & fees</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="teams.html">Teams</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="FAQ.html">FAQ</a>
+            </li>
+            <li class="nav-item">
+              <a routerLinkActive="active" class="nav-link" href="reviews.html">Reviews</a>
+            </li>
+          </ul>
+        </div>
+        <!-- END of cms-body-sidenav -->
+
+        <!-- Categories started -->
+        <router-outlet></router-outlet>
+        <!-- Categories ended -->
+
+        <div class="cms-body-content col-12">
+          <div class="cms-have-nocontent" style="display: none">
+            <svg width="71" height="51" viewBox="0 0 71 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M18.8327 2.1665H68.8327M18.8327 25.4998H68.8327M18.8327 48.8332H68.8327M2.16602 2.1665H2.19935M2.16602 25.4998H2.19935M2.16602 48.8332H2.19935"
+                stroke="#8F8F8F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <p>No categories added</p>
+          </div>
+        </div>
+      </figure>
+    </article>
+  </section>
+</aside>

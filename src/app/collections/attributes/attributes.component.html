@@ -1,0 +1,234 @@
+<div class="cms-body-content col-12">
+  <div class="cms-body-inner-content accordion expander attribute" *ngFor="let attribute of attributes; let i=index">
+    <div class="expander-inner">
+      <div class="expander-header" [id]="'heading-' + attribute.id">
+        <button type="button" class="btn arrow" [attr.data-target]="'#collapse-' + attribute.id" data-toggle="collapse"
+          aria-expanded="false">{{attribute.name}}</button>
+        <span class="counter light">{{attribute?.choices?.length}}</span>
+        <div class="plus" data-target="#newColorModal" data-toggle="modal"
+          (click)="onAttributeClick(attribute.name, attribute.id)">
+          <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.5 1V15M1.5 8H15.5" stroke="black" stroke-opacity="0.94" stroke-width="1.2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="more dropdown">
+          <span class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <i class="fal fa-ellipsis-v"></i>
+          </span>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"
+            *ngIf="attribute?.choices?.length === 0; else hasAttributes">
+            <a class="dropdown-item" href="#" data-target="#editAttributesModal" data-toggle="modal"
+              (click)="editingAttribute(attribute.id)">Edit</a>
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"
+              (click)="deletingAttribute(attribute.id)">Delete</a>
+          </div>
+          <ng-template #hasAttributes>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#" data-target="#editAttributesModal" data-toggle="modal"
+                (click)="editingAttribute(attribute.id)">Edit</a>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+      <div [id]="'collapse-' + attribute.id" class="collapse" [attr.aria-labelledby]="'heading-' + attribute.id">
+        <div class="expander-body">
+          <form class="form-group new-choice" [formGroup]="addChoiceForm">
+            <span class="form-minus">
+              <i class="fal fa-plus" (click)="addChoices()"></i>
+            </span>
+            <span class="form-plus">
+              <i class="fal fa-expand-alt"></i>
+            </span>
+            <input type="text" class="form-control" formControlName="name" placeholder="Enter a new choice" />
+          </form>
+          <p class="info p-extra-small gray-darker">Input format: Choice, (comma) SKU suffix</p>
+          <ul class="attributes-list" id="attributesDrag" *ngFor="let choice of attribute.choices">
+            <li class="attributes-item" [ngClass]="{ 'bg': editing }">
+              <span [contentEditable]="editing" class="editable-field" id="attributesItemTitle"
+                (input)="onNameInput($event)">{{choice.name}}</span>
+              <div class="attributes-edit">
+                <span [contentEditable]="editing" class="editable-field p-small gray-darker"
+                  id="attributesItemNumber">{{choice.suffix}}</span>
+                <div class="action" [hidden]="editing">
+                  <span class="edit">
+                    <i class="fal fa-pen" (click)="edit(choice.id)"></i>
+                  </span>
+                  <span class="delete" (click)="onAttributeClick(attribute.name, attribute.id)">
+                    <i class="fal fa-trash-alt" (click)="deleteChoice(choice.id, i)"></i>
+                  </span>
+                </div>
+                <div class="published" [hidden]="!editing">
+                  <span class="check">
+                    <i class="fal fa-check" (click)="save()"></i>
+                  </span>
+                  <span class="undo">
+                    <i data-dismiss="modal" class="fal fa-times" (click)="cancel()"></i>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add new choice modal -->
+  <div id="newColorModal" class="modal fade right add-attributes-modal" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content" [formGroup]="addAttributeForm">
+        <div class="modal-header left-icon">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="icon-close"></i>
+          </button>
+          <p class="p-bold ltr-spacing4">New {{selectedAttributeName}} Choices</p>
+        </div>
+
+        <div class="modal-body">
+          <h5 class="p-bold ltr-spacing4 d-flex">
+            Choices <a href="#" class="p-medium-bold ml-auto import-csv"><i class="fal fa-file"></i> Import from CSV</a>
+          </h5>
+
+          <p class="p-extra-small">Enter choices separated by the line break using this format:</p>
+          <p class="p-extra-small">You can add or edit choices after the attribute is created.</p>
+
+          <textarea class="form-control p-small" formControlName="choices" rows="15"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <div class="bottom-bar">
+            <div class="bottom-bar-left">
+              <a class="btn btn-brand" (click)="addBulkChoices(selectedAttributeId)">{{saveButtonText}}</a>
+              <a data-dismiss="modal" class="btn btn-gray">Cancel</a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- END of newColorModal -->
+
+  <button data-target="#addAttributesModal" data-toggle="modal" type="button"
+    class="btn btn-add cms-add-btn add-attribute"></button>
+
+  <!-- Add attribute modal -->
+  <div id="addAttributesModal" class="modal fade right add-attributes-modal" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content" [formGroup]="addAttributeForm">
+        <div class="modal-header left-icon">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="icon-close"></i>
+          </button>
+          <p class="p-bold ltr-spacing4">New attribute</p>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="name" placeholder="New attribute" />
+          </div>
+
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" />
+            <label class="form-check-label">
+              Enable SKU suffixes to this attrubute choices
+              <a href="#" data-toggle="tooltip" title="Some tooltip text!">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.00065 10.6668V8.00016M8.00065 5.3335H8.00732M14.6673 8.00016C14.6673 11.6821 11.6826 14.6668 8.00065 14.6668C4.31875 14.6668 1.33398 11.6821 1.33398 8.00016C1.33398 4.31826 4.31875 1.3335 8.00065 1.3335C11.6826 1.3335 14.6673 4.31826 14.6673 8.00016Z"
+                    stroke="black" stroke-opacity="0.94" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </label>
+          </div>
+
+          <h5 class="p-bold ltr-spacing4 d-flex">
+            Choices <a href="#" class="p-medium-bold ml-auto import-csv"><i class="fal fa-file"></i> Import from CSV</a>
+          </h5>
+
+          <p class="p-extra-small">Enter choices separated by the line break using this format: Choice, (comma) SKU
+            suffix.</p>
+          <p class="p-extra-small">You can add or edit choices after the attribute is created.</p>
+
+          <textarea class="form-control p-small" rows="15">
+          </textarea>
+        </div>
+
+        <div class="modal-footer">
+          <div class="bottom-bar">
+            <div class="bottom-bar-left">
+              <a class="btn btn-brand" (click)="addAttributes()">{{saveButtonText}}</a>
+              <a class="btn btn-gray">Cancel</a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- END of add-attributes-modal -->
+
+  <!-- Delete attribute modal -->
+  <div id="deleteModal" class="modal fade delete-modal" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p class="p-bold">Delete this choice?</p>
+          <p class="p-medium mb-3"> The choice is used in 0 products.</p>
+          <a data-dismiss="modal" class="btn btn-danger" (click)="deleteAttribute(selectedDeletingAttribute)">Delete</a>
+          <a data-dismiss="modal" class="btn btn-gray">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END of delete modal -->
+
+  <!-- Edit attribute modal -->
+  <div id="editAttributesModal" class="modal fade right edit-attributes-modal" tabindex="-1"
+    *ngFor="let attribute of attributes">
+    <div class="modal-dialog">
+      <form class="modal-content" [formGroup]="addAttributeForm">
+        <div class="modal-header left-icon">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="icon-close"></i>
+          </button>
+          <p class="p-bold ltr-spacing4">Edit attribute</p>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="name" />
+          </div>
+
+          <h5 class="p-bold ltr-spacing4 d-flex">
+            Add new choices <a href="#" class="p-medium-bold ml-auto import-csv"><i class="fal fa-file"></i> Import from
+              CSV</a>
+          </h5>
+
+          <p class="p-extra-small">Enter choices separated by the line break. You can add or edit choices after the
+            attribute is created.</p>
+          <textarea class="form-control p-small" rows="15"></textarea>
+        </div>
+        <div class="modal-footer" *ngIf="!hasChoices; else hasChoice">
+          <div class="bottom-bar">
+            <div class="bottom-bar-left">
+              <a data-dismiss="modal" class="btn btn-brand" (click)="updateAttribute(selectedEditingAttribute)">Save</a>
+              <a data-dismiss="modal" class="btn btn-gray">Cancel</a>
+            </div>
+            <button href="#" class="btn btn-delete"></button>
+          </div>
+        </div>
+        <ng-template #hasChoice>
+          <div class="modal-footer">
+            <div class="bottom-bar">
+              <div class="bottom-bar-left">
+                <a data-dismiss="modal" class="btn btn-brand"
+                  (click)="updateAttribute(selectedEditingAttribute)">Save</a>
+                <a data-dismiss="modal" class="btn btn-gray">Cancel</a>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </form>
+    </div>
+  </div>
+  <!-- END of edit attributes modal -->

@@ -1,0 +1,18 @@
+.form-control:disabled, .form-control[readonly] {
+  background-color: #e9ecef;
+  opacity: 1;
+}
+
+.disabled {
+  color: #626e99
+}
+
+.disabled-text {
+  box-sizing: border-box;
+  color: #626e99;
+  line-height: 16px;
+  margin-top: 14px;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+

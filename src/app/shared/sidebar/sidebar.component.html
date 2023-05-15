@@ -1,0 +1,152 @@
+<aside class="left-sidebar">
+  <button class="btn-add expand-btn"></button>
+  <section class="cms-sidebar full">
+    <ul class="cms-sidebar-list">
+      <li>
+        <a href="#" class="cms-sidebar-brand">
+          <img src="assets/images/Pruvit-CMS-Logo.svg" alt="pruvit logo" class="img-fl">
+        </a>
+      </li>
+
+      <li class="cms-sidebar-item nav-search">
+        <div class="form-group icon">
+          <i class="fal fa-search"></i>
+          <input type="text" class="form-control" placeholder="Search" />
+        </div>
+        <a href="#" class="cms-sidebar-link">
+          <i class="icon-search"></i>
+        </a>
+      </li>
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" routerLink="/dashboard" class="cms-sidebar-link">
+          <i class="icon-dashboard"></i>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" class="cms-sidebar-link">
+          <i class="icon-products"></i>
+          <span class="text">Products</span>
+        </a>
+      </li>
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" routerLink="/collections/categories" class="cms-sidebar-link">
+          <i class="icon-tag"></i>
+          <span class="text">Collections</span>
+        </a>
+      </li>
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" class="cms-sidebar-link">
+          <i class="icon-translation"></i>
+          <span class="text">Translation</span>
+        </a>
+      </li>
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" class="cms-sidebar-link">
+          <i class="icon-pricing"></i>
+          <span class="text">Price lists</span>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="cms-sidebar-list">
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" class="cms-sidebar-link">
+          <i class="icon-settings"></i>
+          <span class="text">Settings</span>
+        </a>
+      </li>
+      <li class="cms-sidebar-item">
+        <a routerLinkActive="active" class="cms-sidebar-link">
+          <i class="icon-question"></i>
+          <span class="text">Help</span>
+        </a>
+      </li>
+      <li class="cms-sidebar-item avatar">
+        <span class="cms-sidebar-link">
+
+          <div class="more dropdown">
+            <div class="dropdown-toggle btn arrows btn-text" data-toggle="dropdown" aria-expanded="false">
+              <img [src]="userInfo.avatar ? userInfo.avatar : defaultImgURl" alt=""
+                class="img-fluid cms-sidebar-admin" />
+              <span class="text"> {{userInfo.firstName+ ' ' + userInfo.lastName}}</span>
+            </div>
+            <div class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" data-target="#accountSettingsModal" data-toggle="modal">Account settings</a>
+              <a class="dropdown-item" (click)="proceedLogout($event)">Log out</a>
+            </div>
+          </div>
+        </span>
+      </li>
+    </ul>
+  </section>
+</aside>
+
+<div id="accountSettingsModal" class="modal fade right account-settings-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header left-icon">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="icon-close"></i>
+        </button>
+        <h5 class="modal-title">Account settings</h5>
+      </div>
+
+      <form [formGroup]="userUpdateForm">
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-6">
+              <label>First name</label>
+              <input type="text" class="form-control" formControlName="firstName" placeholder="Enter first name">
+            </div>
+            <div class="form-group col-6">
+              <label>Last name</label>
+              <input type="text" class="form-control" formControlName="lastName" placeholder="Enter last name">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-6">
+              <label>Email</label>
+              <input readonly type="email" class="form-control disabled" value="{{userInfo.email}}"
+                placeholder="Enter email">
+              <p class="disabled-text">Email address cannot be changed.</p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-12 profile-photo">
+              <label class="mb-3">Profile photo</label>
+              <div class="row">
+                <div class="col prf-img">
+                  <img [src]="userInfo.avatar ? userInfo.avatar : defaultImgURl" class="rounded-circle img-fluid"
+                    alt="">
+                </div>
+                <div class="col">
+                  <a href="#" class="btn btn-gray">Change photo</a>
+                  <p class="p-extra-small gray-dark-lighter">JPG, PNG or GIF up to 4Mb</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-6">
+              <label class="mb-2">Password</label>
+              <a href="#" class="btn btn-gray">Change password</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="bottom-bar">
+            <div class="bottom-bar-left">
+              <button type="button" class="btn btn-gray" (click)="updateUserInfo()">{{ saveButtonText }}</button>
+              <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

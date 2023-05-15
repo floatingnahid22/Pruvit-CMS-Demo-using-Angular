@@ -1,0 +1,36 @@
+<div class="gray-bg">
+  <div class="cms-login-wrap">
+    <div class="card card-blank">
+      <div class="login-head text-center">
+        <a routerLink="/dashboard">
+          <img src="assets/images/Pruvit-CMS-Logo.svg" alt="CMS logo" class="img-fluid" />
+        </a>
+      </div>
+
+      <form [formGroup]="Login" (ngSubmit)="proceedLogin()">
+        <div class="login-body">
+          <div class="form-group icon">
+            <label class="brand-secondary">Email</label>
+            <i class="icon-user"></i>
+            <input type="email" class="form-control" formControlName="email" placeholder="Email">
+          </div>
+
+          <div class="form-group icon">
+            <label class="brand-secondary"> Password </label>
+            <i class="fal fa-lock-alt"></i>
+            <input type="password" class="form-control" formControlName="password" placeholder="Password">
+          </div>
+        </div>
+
+        <div class="login-footer">
+          <div class="form-group">
+            <button type="submit" class="btn btn-brand">
+              {{saveButtonText}}
+              <span class="icon-chevron-right"></span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,209 @@
+<div class="cms-body-content col-12">
+  <div class="cms-body-inner-content accordion expander">
+    <div class="expander-inner category" *ngFor="let category of categoryTree">
+      <div class="expander-header" [id]="'heading-' + category.id">
+        <div class="item btn-item">
+          <div class="inner-cont" *ngIf="category.subCategories.length > 0; else nosubCategories">
+            <span class="btn arrow collapsed" [attr.data-target]="'#collapse-' + category.id" data-toggle="collapse"
+              aria-expanded="false">{{ category.name }}</span>
+          </div>
+          <ng-template #nosubCategories>
+            <div class="inner-cont my-1">
+              {{ category.name }}
+            </div>
+          </ng-template>
+          <div class="more d-flex">
+            <div class="icon-hover" data-toggle="tooltip" data-placement="top">
+              <a class="icon-plus-circle fs20" data-target="#addCategoryModal" data-toggle="modal"
+                (click)="toggleAddingSubcategory(category.id)"></a>
+            </div>
+            <div class="dropdown">
+              <span class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fal fa-ellipsis-v"></i>
+              </span>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" data-target="#editCategoryModal" data-toggle="modal"
+                  (click)="editCategory(category.id)">Edit</a>
+                <a class="dropdown-item" href="#" data-target="#deleteModal" data-toggle="modal"
+                  (click)="deletingSubcategory(category.id)">Delete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [id]="'collapse-' + category.id" class="collapse" [attr.aria-labelledby]="'heading-' + category.id">
+        <div class="expander-body">
+          <app-recursive [subCategories]="category.subCategories" (deleteSubCategoryEvent)="deletingSubcategory($event)"
+            (addSubCategoryEvent)="toggleAddingSubcategory($event)"
+            (editSubCategoryEvent)="editCategory($event)"></app-recursive>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add category button(plus button) -->
+<button data-target="#addCategoryModal" data-toggle="modal" type="button" class="btn btn-add cms-add-btn add-category"
+  (click)="toggleAddingCategory()"></button>
+
+<!-- Add category modal -->
+<div id="addCategoryModal" class="modal fade right add-category-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" [formGroup]="addCategoryForm">
+      <div class="modal-header left-icon-tab">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="icon-close"></i>
+        </button>
+        <ul class="modal-tab nav-tabs">
+          <li class="tab-item" [ngClass]="{ 'active': activeTabIndex === 0 }">
+            <a href="#newCategory" data-toggle="tab" (click)="setActiveTab(0)"> {{ addingSubcategory ? 'New subcategory'
+              : 'New category' }} </a>
+          </li>
+          <li class="tab-item" [ngClass]="{ 'active': activeTabIndex === 1 }">
+            <a href="#bulk" data-toggle="tab" (click)="setActiveTab(1)"> {{ addingSubcategory ? '' : 'Bulk Add' }} </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="modal-body tab-content">
+        <div class="tab-pane active" id="newCategory">
+          <div class="form-group">
+            <input type="text" class="form-control" formControlName="name" placeholder="Category name" />
+          </div>
+
+          <h5 class="brand-secondary pt-3 mb-3">Descriptions</h5>
+          <div class="form-group">
+            <label class="brand-secondary mb-0">Short text</label>
+            <p class="p-extra-small gray-darker mb-2">Short text is displayed under the category heading in a
+              site catalog</p>
+            <textarea class="form-control" formControlName="shortText" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="brand-secondary mb-0">Long text</label>
+            <p class="p-extra-small gray-darker mb-2">Long text is displayed in the product catalog as a
+              separate section after the title and short text</p>
+            <textarea class="form-control" formControlName="longText" rows="6"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="brand-secondary mb-0">Media</label>
+            <div class="dragbox-outer">
+              <div class="dragBox">
+                <p class="drag-icon"></p>
+                <p class="drag-text p-medium-bold gray-dark">Drop files or click to select</p>
+                <input type="file" onchange="dragNdrop(event)" ondragover="drag()" ondrop="drop()" id="uploadFile"
+                  class="uploadFile" formControlName="media">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="!addingSubcategory">
+            <h5 class="brand-secondary pt-3 mb-3">Subcategories</h5>
+            <p class="p-extra-small gray-darker mb-2">Enter subcategories separated by a line break. Use TAB button on
+              your keyboard to add another nesting level.</p>
+            <textarea class="form-control p-small ng-untouched ng-pristine ng-valid" rows="6"
+              formControlName="subCategories">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="tab-pane bulk" id="bulk">
+          <div class="form-group">
+            <p class="p-extra-small gray-darker mb-2">Enter categories separated by a line break. Use TAB button on
+              your keyboard to add another nesting level.</p>
+            <textarea class="form-control p-small" rows="25">
+              </textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="bottom-bar">
+          <div class="bottom-bar-left">
+            <a type="button" (click)="addCategories()" class="btn btn-brand">{{saveButtonText}}</a>
+            <a data-dismiss="modal" class="btn btn-gray">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit category modal -->
+<div id="editCategoryModal" class="modal fade right edit-category-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" [formGroup]="addCategoryForm">
+      <div class="modal-header left-icon">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="icon-close"></i>
+        </button>
+        <h5 class="modal-title">Edit category</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input type="text" class="form-control" formControlName="name" placeholder="Category name" value="" />
+        </div>
+        <div class="description">
+          <h1 class="p-bold description-heading">Descriptions</h1>
+          <div class="form-group">
+            <label class="brand-secondary mb-0">Short text</label>
+            <p class="p-extra-small gray-darker mb-2">Short text is displayed under the category heading in a site
+              catalog</p>
+            <textarea class="form-control" formControlName="shortText" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="brand-secondary mb-0">Long text</label>
+            <p class="p-extra-small gray-darker mb-2">Long text is displayed in the product catalog as a separate
+              section after the title and short text</p>
+            <textarea class="form-control" formControlName="longText" rows="6"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="brand-secondary mb-0">Media</label>
+            <div class="dragbox-outer">
+              <div class="dragBox">
+                <p class="drag-icon"></p>
+                <p class="drag-text p-medium-bold gray-dark">Drop files or click to select</p>
+                <input type="file" onchange="dragNdrop(event)" ondragover="drag()" ondrop="drop()" id="uploadFile"
+                  class="uploadFile" formControlName="media">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="bottom-bar">
+          <div class="bottom-bar-left">
+            <a type="button" (click)="updateCategory(selectedEditParent)" class="btn btn-brand">{{saveButtonText}}</a>
+            <a data-dismiss="modal" class="btn btn-gray">Cancel</a>
+          </div>
+          <button href="#" class="btn btn-delete"></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete category modal -->
+<div id="deleteModal" class="modal fade delete-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body" *ngIf="countSubcategories; else nosubCategories">
+        <p class="p-bold">You can not delete this category</p>
+        <p class="p-medium mb-3">The category contains {{countSubcategories}} subcategories</p>
+        <a data-dismiss="modal" class="btn btn-danger disabled">Delete</a>
+        <a data-dismiss="modal" class="btn btn-gray">Close</a>
+      </div>
+      <ng-template #nosubCategories>
+        <div class="modal-body">
+          <p class="p-bold">You can delete this category</p>
+          <p class="p-medium mb-3">The category contains 0 subcategories</p>
+          <a data-dismiss="modal" class="btn btn-danger" (click)="deleteCategory(selectedDeleteParent)">Delete</a>
+          <a data-dismiss="modal" class="btn btn-gray">Close</a>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
