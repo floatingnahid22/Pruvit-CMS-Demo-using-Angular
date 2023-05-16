@@ -27,6 +27,7 @@ export class AttributesComponent implements OnInit {
 
   // to find attributes name for form title
   onAttributeClick(attributeName: string, attributeId: string) {
+    this.addAttributeForm.reset();
     this.selectedAttributeName = attributeName;
     this.selectedAttributeId = attributeId;
 
@@ -66,7 +67,6 @@ export class AttributesComponent implements OnInit {
 
   // to add attrubtes
   addAttributes() {
-    this.addAttributeForm.reset();
     this.saveButtonText = 'Saving';
     const formData = this.addAttributeForm.value;
 
@@ -148,17 +148,19 @@ export class AttributesComponent implements OnInit {
     this.saveButtonText = 'Saving';
     const formData = this.addChoiceForm.value;
 
-    this.attributeService.addChoices(formData).subscribe((res: any) => {
-      console.log(res);
-      // Update choices array
-      const newChoice = res.result[0];
-      this.choices.push(newChoice);
+    const inputParts = formData.name.split(',' || ', ');
+    const name = inputParts[0].trim();
+    const suffix = inputParts[1] ? inputParts[1].trim() : '';
 
+    const newData = { name, suffix, attribute: formData.attribute };
+
+    this.attributeService.addChoices(newData).subscribe((res: any) => {
+      console.log(res);
       // Update corresponding attribute's choices array in attributes array
       const attributeIndex = this.attributes.findIndex(
         (a: any) => a.id === formData.attribute
       );
-      this.attributes[attributeIndex].choices.push(newChoice);
+      this.attributes[attributeIndex].choices.push(newData);
 
       this.saveButtonText = 'Saved';
       setTimeout(() => {
@@ -221,11 +223,13 @@ export class AttributesComponent implements OnInit {
     this.selectedEditingChoice = choiceId;
     console.log(choiceId);
     this.editedChoice.name = this.choices.name;
+    this.editedChoice.suffix = this.choices.suffix;
   }
 
   // to save edited informatrion
-  save() {
+  updateChoice() {
     this.choices.name = this.editedChoice.name;
+    this.choices.suffix = this.editedChoice.suffix;
     this.attributeService
       .editChoice(this.selectedEditingChoice, this.editedChoice)
       .subscribe(() => {
@@ -238,7 +242,17 @@ export class AttributesComponent implements OnInit {
     this.editedChoice = { name: '', suffix: '' };
   }
 
+  // to get name from user input
   onNameInput(event: any) {
-    this.editedChoice.name = event.target.textContent;
+    // split the input value into choice name and SKU suffix
+    const inputParts = event.target.textContent.split(', ' || ',');
+    this.editedChoice.name = inputParts[0].trim();
+    this.editedChoice.suffix = inputParts[1] ? inputParts[1].trim() : '';
+  }
+
+  // to get suffix from user input
+  onSuffixInput(event: any) {
+    // update the edited choice's suffix
+    this.editedChoice.suffix = event.target.textContent.trim();
   }
 }

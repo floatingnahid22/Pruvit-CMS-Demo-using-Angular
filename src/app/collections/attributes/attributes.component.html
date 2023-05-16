@@ -31,7 +31,8 @@
           </ng-template>
         </div>
       </div>
-      <div [id]="'collapse-' + attribute.id" class="collapse" [attr.aria-labelledby]="'heading-' + attribute.id">
+      <div [id]="'collapse-' + attribute.id" class="collapse" [attr.aria-labelledby]="'heading-' + attribute.id"
+        (click)="onAttributeClick(attribute.name, attribute.id)">
         <div class="expander-body">
           <form class="form-group new-choice" [formGroup]="addChoiceForm">
             <span class="form-minus">
@@ -48,8 +49,8 @@
               <span [contentEditable]="editing" class="editable-field" id="attributesItemTitle"
                 (input)="onNameInput($event)">{{choice.name}}</span>
               <div class="attributes-edit">
-                <span [contentEditable]="editing" class="editable-field p-small gray-darker"
-                  id="attributesItemNumber">{{choice.suffix}}</span>
+                <span [contentEditable]="editing" class="editable-field p-small gray-darker" id="attributesItemNumber"
+                  (input)="onSuffixInput($event)">{{choice.suffix}}</span>
                 <div class="action" [hidden]="editing">
                   <span class="edit">
                     <i class="fal fa-pen" (click)="edit(choice.id)"></i>
@@ -60,7 +61,7 @@
                 </div>
                 <div class="published" [hidden]="!editing">
                   <span class="check">
-                    <i class="fal fa-check" (click)="save()"></i>
+                    <i class="fal fa-check" (click)="updateChoice()"></i>
                   </span>
                   <span class="undo">
                     <i data-dismiss="modal" class="fal fa-times" (click)="cancel()"></i>
